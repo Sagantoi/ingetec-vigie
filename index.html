@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Ingetec Vigie</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;min-height:100vh}
+.screen{display:none;padding:20px;max-width:700px;margin:0 auto}.screen.active{display:block}
+h1{font-size:clamp(28px,6vw,48px);font-weight:800;letter-spacing:-0.03em}
+.orange{color:#f97316}
+.btn{padding:10px 20px;border-radius:8px;border:none;cursor:pointer;font-size:14px;font-weight:600;transition:all 0.15s;font-family:inherit}
+.btn-primary{background:#f97316;color:#fff}.btn-primary:disabled{opacity:0.4;cursor:not-allowed}
+.btn-secondary{background:transparent;border:1px solid #30363d;color:#e6edf3}
+.btn-ghost{background:transparent;border:none;color:#8b949e;cursor:pointer;font-size:13px;font-family:inherit}
+.card{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:16px;margin-bottom:12px}
+.badge{display:inline-flex;align-items:center;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase}
+.label{font-size:11px;font-weight:700;color:#8b949e;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px}
+textarea,input{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #30363d;background:#161b22;color:#e6edf3;font-size:14px;font-family:inherit;outline:none;resize:vertical}
+textarea:focus,input:focus{border-color:#f97316}
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.cat-btn{padding:10px 12px;border-radius:8px;border:1px solid #30363d;background:#161b22;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:8px;transition:all 0.15s;color:#e6edf3}
+.cat-btn.selected{border-color:#f97316;background:rgba(249,115,22,0.1)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.info-block{padding:10px 12px;background:#0d1117;border-radius:8px;border:1px solid #30363d}
+.ticket-row{padding:10px 12px;border-radius:8px;cursor:pointer;border:1px solid transparent;transition:all 0.15s;margin-bottom:4px}
+.ticket-row:hover,.ticket-row.active{background:#161b22;border-color:#30363d}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn 0.3s ease both}
+.spinner{display:inline-block;animation:spin 1.5s linear infinite;font-size:36px}
+.expert-layout{display:flex;gap:0;min-height:90vh}
+.expert-sidebar{width:260px;flex-shrink:0;border-right:1px solid #30363d;padding:12px 8px}
+.expert-main{flex:1;padding:20px;overflow-y:auto}
+@media(max-width:600px){.two-col{grid-template-columns:1fr}.expert-layout{flex-direction:column}.expert-sidebar{width:100%;border-right:none;border-bottom:1px solid #30363d}}
+</style>
+</head>
+<body>
+<div id="home" class="screen active">
+  <div style="text-align:center;padding:60px 20px 40px">
+    <div style="font-size:13px;color:#f97316;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px">Ingetec</div>
+    <div style="width:32px;height:2px;background:#f97316;margin:0 auto 20px;border-radius:2px"></div>
+    <h1>SOS <span class="orange">Routes</span></h1>
+    <p style="color:#8b949e;font-size:15px;margin:12px auto 36px;max-width:400px;line-height:1.7">Diagnostic IA instantané + avis expert Ingetec pour vos infrastructures.</p>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+      <div class="card" style="width:220px;text-align:left;cursor:pointer" onclick="show('manager')">
+        <div style="font-size:28px;margin-bottom:10px">🏛️</div>
+        <div style="font-weight:700;font-size:15px;margin-bottom:6px">Espace Gestionnaire</div>
+        <div style="color:#8b949e;font-size:13px;margin-bottom:14px">Soumettez un signalement</div>
+        <div style="color:#f97316;font-size:13px;font-weight:600">Soumettre →</div>
+      </div>
+      <div class="card" style="width:220px;text-align:left;cursor:pointer" onclick="show('expert')">
+        <div style="font-size:28px;margin-bottom:10px">🔬</div>
+        <div style="font-weight:700;font-size:15px;margin-bottom:6px">Espace Expert Ingetec</div>
+        <div style="color:#8b949e;font-size:13px;margin-bottom:14px">Traitez les demandes <span id="home-count"></span></div>
+        <div style="color:#3b82f6;font-size:13px;font-weight:600">Tableau de bord →</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:24px;justify-content:center;margin-top:36px;color:#484f58;font-size:12px;flex-wrap:wrap">
+      <span>✦ Analyse IA instantanée</span><span>✦ Experts certifiés</span><span>✦ Avis sous 24h</span>
+    </div>
+  </div>
+</div>
+
+<div id="manager" class="screen">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+    <div><div style="font-size:18px;font-weight:800">SOS <span class="orange">Routes</span></div><div style="font-size:11px;color:#8b949e">Espace Gestionnaire</div></div>
+    <button class="btn btn-secondary" style="font-size:12px" onclick="show('home')">← Accueil</button>
+  </div>
+  <div id="form-step">
+    <div style="font-weight:700;font-size:17px;margin-bottom:18px">📋 Nouveau signalement</div>
+    <div id="upload-zone" onclick="document.getElementById('file-input').click()" style="border:2px dashed #30363d;border-radius:12px;padding:32px;text-align:center;cursor:pointer;margin-bottom:16px;background:#161b22;transition:border-color 0.2s">
+      <div style="font-size:28px;margin-bottom:8px">📸</div>
+      <div style="color:#8b949e;font-size:14px">Glissez une photo ou cliquez</div>
+      <div style="color:#484f58;font-size:12px;margin-top:4px">JPG, PNG — l'IA analysera la photo</div>
+    </div>
+    <div id="preview-zone" style="display:none;margin-bottom:16px;position:relative">
+      <img id="preview-img" style="width:100%;max-height:280px;object-fit:cover;border-radius:12px;display:block">
+      <button onclick="removePhoto()" style="position:absolute;top:8px;right:8px;padding:4px 10px;border-radius:6px;border:1px solid #30363d;background:#161b22;color:#e6edf3;cursor:pointer;font-size:12px">✕</button>
+    </div>
+    <input type="file" id="file-input" accept="image/*" style="display:none" onchange="handleFile(this)">
+    <div class="label">Catégorie *</div>
+    <div class="cat-grid">
+      <div class="cat-btn" onclick="selectCat('chaussee',this)">🛣️ Chaussées</div>
+      <div class="cat-btn" onclick="selectCat('ouvrage',this)">🌉 Ouvrages d'art</div>
+      <div class="cat-btn" onclick="selectCat('signalisation',this)">🚦 Signalisation</div>
+      <div class="cat-btn" onclick="selectCat('glissement',this)">⛰️ Glissements</div>
+    </div>
+    <div class="label">Localisation</div>
+    <input type="text" id="location" placeholder="Ex: RD 42, commune de Saint-Fons, PR 12+500" style="margin-bottom:14px">
+    <div class="label">Description * <span id="desc-count" style="font-weight:400;color:#484f58">(0/500)</span></div>
+    <textarea id="description" rows="4" placeholder="Décrivez le problème, son étendue, les conditions météo récentes..." oninput="updateCount()"></textarea>
+    <div id="form-error" style="display:none;color:#ef4444;font-size:13px;padding:10px 14px;background:rgba(239,68,68,0.1);border-radius:8px;margin-top:8px"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+      <button class="btn btn-secondary" onclick="show('home')">Annuler</button>
+      <button class="btn btn-primary" id="submit-btn" onclick="submitForm()" disabled>🔍 Analyser avec l'IA →</button>
+    </div>
+  </div>
+  <div id="analyzing-step" style="display:none;text-align:center;padding:60px 20px">
+    <div class="spinner">⚙️</div>
+    <div style="font-size:20px;font-weight:700;margin:16px 0 8px">Analyse en cours...</div>
+    <div style="color:#8b949e;font-size:14px">Claude analyse votre signalement</div>
+  </div>
+  <div id="result-step" style="display:none" class="fade-in">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+      <div style="font-weight:700;font-size:17px">✅ Signalement soumis</div>
+      <span id="result-badge" class="badge"></span>
+    </div>
+    <img id="result-photo" style="display:none;width:100%;max-height:200px;object-fit:cover;border-radius:12px;margin-bottom:16px">
+    <div id="result-ai-card"></div>
+    <div class="card" style="font-size:13px;color:#8b949e;margin-top:4px"><span style="color:#f97316">●</span> Signalement transmis aux experts Ingetec. Avis sous 24h.</div>
+    <div style="display:flex;gap:10px;margin-top:14px;justify-content:flex-end">
+      <button class="btn btn-secondary" onclick="resetForm()">Nouveau signalement</button>
+      <button class="btn btn-secondary" onclick="show('home')">Accueil</button>
+    </div>
+  </div>
+</div>
+
+<div id="expert" class="screen" style="padding:0;max-width:none">
+  <div class="expert-layout">
+    <div class="expert-sidebar">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;padding:4px 4px 8px;border-bottom:1px solid #30363d">
+        <div style="font-weight:800;font-size:14px">SOS <span class="orange">Routes</span></div>
+        <button class="btn-ghost" onclick="show('home')">← Accueil</button>
+      </div>
+      <div style="font-size:10px;font-weight:700;color:#484f58;text-transform:uppercase;letter-spacing:0.08em;padding:10px 4px 6px">En attente (<span id="pending-count">0</span>)</div>
+      <div id="ticket-list"><div style="padding:12px 4px;color:#484f58;font-size:12px;text-align:center">Aucun signalement.</div></div>
+      <div id="done-section" style="display:none">
+        <div style="font-size:10px;font-weight:700;color:#484f58;text-transform:uppercase;letter-spacing:0.08em;padding:10px 4px 6px">Traités (<span id="done-count">0</span>)</div>
+        <div id="done-list"></div>
+      </div>
+    </div>
+    <div class="expert-main">
+      <div id="no-ticket" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:400px;color:#484f58">
+        <div style="font-size:40px;margin-bottom:12px">🔬</div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:4px">Sélectionnez un signalement</div>
+      </div>
+      <div id="ticket-detail" style="display:none" class="fade-in"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const CATS={chaussee:{label:"Chaussées & revêtements",icon:"🛣️"},ouvrage:{label:"Ouvrages d'art",icon:"🌉"},signalisation:{label:"Signalisation",icon:"🚦"},glissement:{label:"Glissements",icon:"⛰️"}};
+const UC={faible:"#22c55e",modere:"#eab308",elevee:"#f97316",critique:"#ef4444"};
+let tickets=JSON.parse(localStorage.getItem('sv_tickets')||'[]');
+let selCat=null,imgB64=null,imgPreview=null,activeId=null,expNotes='',diagCorr='';
+function save(){localStorage.setItem('sv_tickets',JSON.stringify(tickets));}
+function show(s){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById(s).classList.add('active');if(s==='expert')renderSidebar();if(s==='home'){const p=tickets.filter(t=>t.status==='pending').length;document.getElementById('home-count').textContent=p>0?'· '+p+' en attente':'';}}
+function selectCat(c,el){selCat=c;document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('selected'));el.classList.add('selected');checkForm();}
+function updateCount(){const d=document.getElementById('description').value;document.getElementById('desc-count').textContent='('+d.length+'/500)';if(d.length>500)document.getElementById('description').value=d.slice(0,500);checkForm();}
+function checkForm(){const d=document.getElementById('description').value;document.getElementById('submit-btn').disabled=!(selCat&&d.length>20);}
+function handleFile(input){const file=input.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{imgPreview=e.target.result;imgB64=e.target.result.split(',')[1];document.getElementById('upload-zone').style.display='none';document.getElementById('preview-zone').style.display='block';document.getElementById('preview-img').src=imgPreview;};reader.readAsDataURL(file);}
+function removePhoto(){imgB64=null;imgPreview=null;document.getElementById('upload-zone').style.display='block';document.getElementById('preview-zone').style.display='none';document.getElementById('file-input').value='';}
+async function submitForm(){
+  const desc=document.getElementById('description').value,loc=document.getElementById('location').value;
+  document.getElementById('form-step').style.display='none';document.getElementById('analyzing-step').style.display='block';document.getElementById('form-error').style.display='none';
+  try{
+    const res=await fetch('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'analyze',category:selCat,description:desc,location:loc,imageBase64:imgB64})});
+    const analysis=await res.json();if(analysis.error)throw new Error(analysis.error);
+    const ticket={id:Date.now().toString(),category:selCat,location:loc,description:desc,imagePreview:imgPreview,analysis,status:'pending',createdAt:new Date().toISOString(),org:'Gestionnaire'};
+    tickets.unshift(ticket);save();
+    document.getElementById('analyzing-step').style.display='none';document.getElementById('result-step').style.display='block';
+    const uc=UC[analysis.urgence]||UC.modere;const badge=document.getElementById('result-badge');
+    badge.style.cssText='background:'+uc+'22;color:'+uc+';border:1px solid '+uc+'44';badge.textContent=analysis.urgence+' urgence';
+    const rp=document.getElementById('result-photo');if(imgPreview){rp.src=imgPreview;rp.style.display='block';}
+    document.getElementById('result-ai-card').innerHTML=aiCardHTML(analysis);
+  }catch(e){document.getElementById('analyzing-step').style.display='none';document.getElementById('form-step').style.display='block';const err=document.getElementById('form-error');err.style.display='block';err.textContent='⚠️ Erreur : '+e.message;}
+}
+function aiCardHTML(a){const uc=UC[a.urgence]||UC.modere;return '<div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div style="font-weight:700;font-size:14px">🤖 Pré-analyse IA</div><span class="badge" style="background:'+uc+'22;color:'+uc+';border:1px solid '+uc+'44">'+a.urgence+' urgence</span></div><div style="font-size:13px;line-height:1.7;margin-bottom:12px">'+a.synthese+'</div><div class="two-col" style="margin-bottom:10px"><div class="info-block"><div class="label">Diagnostic</div><div style="font-size:12px">'+a.diagnostic+'</div></div><div class="info-block"><div class="label">Recommandation</div><div style="font-size:12px">'+a.recommandations_expert+'</div></div></div><div class="two-col" style="margin-bottom:10px"><div class="info-block"><div class="label" style="color:#ef4444cc">Risques</div>'+(a.risques||[]).map(r=>'<div style="font-size:12px;padding:2px 0;display:flex;gap:6px"><span style="color:#ef4444">•</span>'+r+'</div>').join('')+'</div><div class="info-block"><div class="label" style="color:#f97316cc">Actions</div>'+(a.actions_immediates||[]).map(x=>'<div style="font-size:12px;padding:2px 0;display:flex;gap:6px"><span style="color:#f97316">→</span>'+x+'</div>').join('')+'</div></div><div style="display:flex;gap:6px;flex-wrap:wrap">'+(a.normes_applicables||[]).map(n=>'<span style="font-size:11px;padding:2px 8px;background:rgba(59,130,246,0.15);color:#60a5fa;border-radius:4px">'+n+'</span>').join('')+'</div></div>';}
+function resetForm(){selCat=null;imgB64=null;imgPreview=null;['location','description'].forEach(id=>document.getElementById(id).value='');document.getElementById('desc-count').textContent='(0/500)';document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('selected'));document.getElementById('submit-btn').disabled=true;document.getElementById('form-step').style.display='block';document.getElementById('result-step').style.display='none';document.getElementById('upload-zone').style.display='block';document.getElementById('preview-zone').style.display='none';document.getElementById('result-photo').style.display='none';document.getElementById('file-input').value='';}
+function renderSidebar(){const pending=tickets.filter(t=>t.status==='pending'),done=tickets.filter(t=>t.status==='done');document.getElementById('pending-count').textContent=pending.length;document.getElementById('ticket-list').innerHTML=pending.length===0?'<div style="padding:12px 4px;color:#484f58;font-size:12px;text-align:center">Aucun signalement.<br>Soumettez-en un depuis<br>l\'espace gestionnaire.</div>':pending.map(t=>rowHTML(t)).join('');if(done.length>0){document.getElementById('done-section').style.display='block';document.getElementById('done-count').textContent=done.length;document.getElementById('done-list').innerHTML=done.map(t=>rowHTML(t)).join('');}}
+function rowHTML(t){const uc=t.status==='done'?'#22c55e':(UC[t.analysis?.urgence]||UC.modere);const active=t.id===activeId?'active':'';return '<div class="ticket-row '+active+'" onclick="selectTicket(\''+t.id+'\')"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px"><span style="font-size:11px;color:#8b949e">'+(CATS[t.category]?.icon||'')+'</span><span style="width:7px;height:7px;border-radius:50%;background:'+uc+';display:inline-block"></span></div><div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+t.org+'</div><div style="font-size:11px;color:#8b949e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(t.location||t.description.slice(0,35)+'...')+'</div></div>';}
+function selectTicket(id){activeId=id;expNotes='';diagCorr='';renderSidebar();document.getElementById('no-ticket').style.display='none';const detail=document.getElementById('ticket-detail');detail.style.display='block';detail.innerHTML=ticketHTML(tickets.find(t=>t.id===id));detail.classList.add('fade-in');}
+function ticketHTML(t){const statusBadge=t.status==='done'?'<span class="badge" style="background:#22c55e22;color:#22c55e;border:1px solid #22c55e44">Traité</span>':'<span class="badge" style="background:#eab30822;color:#eab308;border:1px solid #eab30844">En attente</span>';const expertSection=t.status==='done'&&t.expertAvis?expertResultHTML(t.expertAvis):'<div style="margin-bottom:14px;padding:14px;background:#0d1117;border-radius:10px;border:1px solid #30363d"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span>🔄</span><div><div style="font-size:12px;font-weight:700">Correction du diagnostic IA</div><div style="font-size:11px;color:#8b949e">Rectifiez si le diagnostic est incorrect.</div></div></div><div style="padding:8px 10px;border-radius:7px;background:#161b22;border:1px solid #30363d;margin-bottom:8px;display:flex;gap:6px"><span style="font-size:11px;color:#484f58;flex-shrink:0;margin-top:1px">IA :</span><span style="font-size:12px;color:#8b949e;font-style:italic;line-height:1.5">'+t.analysis.diagnostic+'</span></div><textarea id="diag-corr" rows="2" placeholder="Ex : Route humide, pas de faïençage réel..." oninput="diagCorr=this.value;updateCorrStyle(this)" style="font-size:12px;margin-bottom:6px"></textarea><div id="corr-ok" style="display:none;font-size:11px;color:#22c55e">✓ Diagnostic corrigé</div></div><div class="label">Observations complémentaires *</div><textarea id="expert-notes" rows="3" placeholder="Contexte local, météo, historique..." oninput="expNotes=this.value;checkGenBtn()" style="margin-bottom:12px"></textarea><div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" id="gen-btn" onclick="generateAvis(\''+t.id+'\')" disabled>✍️ Générer l\'avis officiel</button></div>';return '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px"><div><div style="font-size:12px;color:#8b949e;margin-bottom:4px">'+(CATS[t.category]?.icon||'')+' '+(CATS[t.category]?.label||'')+' · '+new Date(t.createdAt).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})+'</div><div style="font-size:18px;font-weight:700">'+t.org+'</div><div style="color:#8b949e;font-size:13px">'+(t.location||'Localisation non précisée')+'</div></div>'+statusBadge+'</div>'+(t.imagePreview?'<img src="'+t.imagePreview+'" style="width:100%;max-height:240px;object-fit:cover;border-radius:12px;margin-bottom:14px">':'')+'<div class="card" style="margin-bottom:12px"><div class="label">Description</div><div style="font-size:13px;line-height:1.6">'+t.description+'</div></div>'+aiCardHTML(t.analysis)+'<div class="card" style="margin-top:12px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:14px"><span style="font-size:16px">🔬</span><span style="font-weight:700;font-size:14px">Avis de l\'expert Ingetec</span></div>'+expertSection+'</div>';}
+function updateCorrStyle(ta){ta.style.borderColor=ta.value.trim()?'#22c55e66':'';ta.style.background=ta.value.trim()?'rgba(34,197,94,0.08)':'';document.getElementById('corr-ok').style.display=ta.value.trim()?'block':'none';}
+function checkGenBtn(){const btn=document.getElementById('gen-btn');if(btn)btn.disabled=!expNotes.trim();}
+async function generateAvis(id){const btn=document.getElementById('gen-btn');if(btn){btn.disabled=true;btn.textContent='⏳ Génération...';}const t=tickets.find(x=>x.id===id);try{const res=await fetch('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'expert',category:t.category,expertNotes:expNotes,diagCorrection:diagCorr,aiAnalysis:t.analysis})});const avis=await res.json();if(avis.error)throw new Error(avis.error);if(diagCorr.trim()){avis.diagnostic_expert=diagCorr.trim();avis.diagnostic_ia=t.analysis.diagnostic;}t.expertAvis=avis;t.status='done';save();renderSidebar();document.getElementById('ticket-detail').innerHTML=ticketHTML(t);}catch(e){if(btn){btn.disabled=false;btn.textContent='✍️ Générer l\'avis officiel';}alert('Erreur : '+e.message);}}
+function expertResultHTML(avis){let c='';if(avis.diagnostic_expert){c='<div style="padding:14px;border-radius:10px;margin-bottom:12px;border:1px solid #22c55e44;background:rgba(34,197,94,0.05)"><div style="font-size:11px;font-weight:700;color:#22c55e;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px">🔄 Diagnostic corrigé par l\'expert</div><div class="two-col"><div style="padding:10px;border-radius:8px;background:#161b22;border:1px solid #30363d"><div style="font-size:10px;font-weight:700;color:#484f58;text-transform:uppercase;margin-bottom:4px">❌ Diagnostic IA initial</div><div style="font-size:12px;color:#8b949e;text-decoration:line-through;opacity:0.7;line-height:1.5">'+avis.diagnostic_ia+'</div></div><div style="padding:10px;border-radius:8px;background:rgba(34,197,94,0.1);border:1px solid #22c55e44"><div style="font-size:10px;font-weight:700;color:#22c55e;text-transform:uppercase;margin-bottom:4px">✓ Diagnostic expert validé</div><div style="font-size:12px;font-weight:600;line-height:1.5">'+avis.diagnostic_expert+'</div></div></div><div style="margin-top:8px;font-size:11px;color:#8b949e;font-style:italic">La valeur ajoutée de l\'expert : une connaissance terrain que l\'IA seule ne peut pas avoir.</div></div>';}return c+'<div style="padding:14px;background:#0d1117;border-radius:10px;margin-bottom:10px;border:1px solid #30363d"><div style="font-size:11px;font-weight:700;color:#3b82f6;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">Avis technique officiel</div><div style="font-size:13px;line-height:1.7">'+avis.avis_officiel+'</div></div><div class="two-col" style="margin-bottom:10px"><div class="info-block"><div class="label">Niveau d\'intervention</div><div style="font-size:13px;font-weight:600">'+avis.niveau_intervention+'</div></div><div class="info-block"><div class="label">Délai recommandé</div><div style="font-size:13px;font-weight:600">'+avis.delai_intervention+'</div></div></div><div style="padding:12px;background:#0d1117;border-radius:10px;margin-bottom:10px;border:1px solid #30363d"><div class="label">Suites à donner</div>'+(avis.suites_a_donner||[]).map(s=>'<div style="font-size:12px;padding:3px 0;display:flex;gap:6px"><span style="color:#f97316">→</span>'+s+'</div>').join('')+'</div><div style="padding:12px;background:#0d1117;border-radius:10px;border:1px solid #30363d"><div class="label">Conclusion</div><div style="font-size:12px;color:#8b949e;line-height:1.6">'+avis.conclusion+'</div></div>';}
+</script>
+</body>
+</html>
