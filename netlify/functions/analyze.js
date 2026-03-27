@@ -1,4 +1,4 @@
-exports.handler = async function (event, context) {
+exports.handler = async function (event) {
   const headers = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "Content-Type",
@@ -30,39 +30,33 @@ exports.handler = async function (event, context) {
     return {
       statusCode: 405,
       headers,
-      body: JSON.stringify({ ok: false, error: "Method not allowed" })
-    };
-  }
-
-  if (!process.env.ANTHROPIC_API_KEY) {
-    return {
-      statusCode: 500,
-      headers,
       body: JSON.stringify({
         ok: false,
-        error: "ANTHROPIC_API_KEY is missing in Netlify environment variables"
+        error: "Method not allowed"
       })
     };
   }
 
-  let payload;
   try {
-    payload = JSON.parse(event.body || "{}");
-  } catch (e) {
+    const payload = JSON.parse(event.body || "{}");
+
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({
+        ok: true,
+        message: "POST received successfully",
+        received: payload
+      })
+    };
+  } catch (error) {
     return {
       statusCode: 400,
       headers,
-      body: JSON.stringify({ ok: false, error: "Invalid JSON body" })
+      body: JSON.stringify({
+        ok: false,
+        error: "Invalid JSON body"
+      })
     };
   }
-
-  return {
-    statusCode: 200,
-    headers,
-    body: JSON.stringify({
-      ok: true,
-      message: "POST received successfully",
-      received: payload
-    })
-  };
 };
